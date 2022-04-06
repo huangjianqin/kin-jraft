@@ -12,7 +12,7 @@
     <properties>
         <kin-framework-java.version>0.1.0.0</kin-framework-java.version>
         <kin-serialization-protobuf.version>0.1.0.0</kin-serialization-protobuf.version>
-        <spring.boot.version>2.5.0</spring.boot.version>
+        <springboot.version>2.6.6</springboot.version>
         <jraft-core.version>1.3.8</jraft-core.version>
     </properties>
 
@@ -34,7 +34,7 @@
                 <!-- Import dependency management from Spring Boot -->
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
-                <version>${spring.boot.version}</version>
+                <version>${springboot.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
