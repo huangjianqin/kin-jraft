@@ -1,7 +1,7 @@
 package org.kin.jraft.election;
 
 import org.kin.jraft.NodeStateChangeListener;
-import org.kin.jraft.RaftServerBootstrap;
+import org.kin.jraft.RaftServer;
 import org.kin.jraft.RaftServerOptions;
 
 import java.util.concurrent.TimeUnit;
@@ -17,7 +17,7 @@ public class ElectionServerTest {
 
         String[] strs = address.split(":");
 
-        RaftServerBootstrap bootstrap = RaftServerOptions.electionBuilder()
+        RaftServer electionRaftServer = RaftServerOptions.electionBuilder()
                 .groupId("election_raft")
                 //模拟每个节点的log目录不一致
                 .dataDir("raft/election".concat(strs[1]))
@@ -27,15 +27,15 @@ public class ElectionServerTest {
 
                     @Override
                     public void onBecomeLeader(long term) {
-                        System.out.println("[ElectionBootstrap] Leader start on term: " + term);
+                        System.out.println("[ElectionRaftServer] Leader start on term: " + term);
                     }
 
                     @Override
                     public void onStepDown(long oldTerm) {
-                        System.out.println("[ElectionBootstrap] Leader step down: " + oldTerm);
+                        System.out.println("[ElectionRaftServer] Leader step down: " + oldTerm);
                     }
                 })
-                .bootstrap();
+                .bind();
 
         Thread.sleep(TimeUnit.MINUTES.toMillis(5));
     }

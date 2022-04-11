@@ -1,7 +1,7 @@
 package org.kin.jraft.counter;
 
 import org.kin.jraft.NodeStateChangeListener;
-import org.kin.jraft.RaftServerBootstrap;
+import org.kin.jraft.RaftServer;
 import org.kin.jraft.RaftServerOptions;
 import org.kin.jraft.counter.processor.GetValueRequestProcessor;
 import org.kin.jraft.counter.processor.IncrementAndGetRequestProcessor;
@@ -19,7 +19,7 @@ public class CounterRaftServiceTest {
 
         String[] strs = address.split(":");
 
-        RaftServerBootstrap bootstrap = RaftServerOptions.builder()
+        RaftServer counterRaftServer = RaftServerOptions.builder()
                 .groupId("counter_raft")
                 //模拟每个节点的log目录不一致
                 .dataDir("raft/counter".concat(strs[1]))
@@ -39,15 +39,15 @@ public class CounterRaftServiceTest {
 
                     @Override
                     public void onBecomeLeader(long term) {
-                        System.out.println("[CounterBootstrap] Leader start on term: " + term);
+                        System.out.println("[CounterRaftServer] Leader start on term: " + term);
                     }
 
                     @Override
                     public void onStepDown(long oldTerm) {
-                        System.out.println("[CounterBootstrap] Leader step down: " + oldTerm);
+                        System.out.println("[CounterRaftServer] Leader step down: " + oldTerm);
                     }
                 })
-                .bootstrap();
+                .bind();
 
         Thread.sleep(TimeUnit.MINUTES.toMillis(5));
     }

@@ -5,7 +5,6 @@ import com.alipay.sofa.jraft.entity.Task;
 import com.alipay.sofa.jraft.error.RaftError;
 import org.apache.commons.lang.StringUtils;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 
 /**
@@ -13,24 +12,24 @@ import java.nio.ByteBuffer;
  * @date 2021/11/14
  */
 public abstract class AbstractRaftService implements RaftService {
-    protected final RaftServerBootstrap bootstrap;
+    protected final RaftServer raftServer;
 
-    protected AbstractRaftService(RaftServerBootstrap bootstrap) {
-        this.bootstrap = bootstrap;
+    protected AbstractRaftService(RaftServer raftServer) {
+        this.raftServer = raftServer;
     }
 
     /**
      * 当前node是否是leader
      */
     protected boolean isLeader() {
-        return bootstrap.getSm().isLeader();
+        return raftServer.getSm().isLeader();
     }
 
     /**
-     * 处理非leader异常
+     * 处理没有leader异常
      */
     protected void handlerNotLeaderError(AbstractClosure<?> closure) {
-        closure.failure("not leader.", bootstrap.getNode().getLeaderId().toString());
+        closure.failure("not leader.", raftServer.getNode().getLeaderId().toString());
         closure.run(new Status(RaftError.EPERM, "not leader"));
     }
 
@@ -62,7 +61,7 @@ public abstract class AbstractRaftService implements RaftService {
         Task task = new Task();
         task.setData(data);
         task.setDone(closure);
-        bootstrap.getNode().apply(task);
+        raftServer.getNode().apply(task);
     }
 
 }

@@ -33,12 +33,12 @@ public class CounterRaftServiceSpringBootTest {
 
             @Override
             public void onBecomeLeader(long term) {
-                System.out.println("[CounterBootstrap] Leader start on term: " + term);
+                System.out.println("[CounterServer] Leader start on term: " + term);
             }
 
             @Override
             public void onStepDown(long oldTerm) {
-                System.out.println("[CounterBootstrap] Leader step down: " + oldTerm);
+                System.out.println("[CounterServer] Leader step down: " + oldTerm);
             }
         };
     }

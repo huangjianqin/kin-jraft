@@ -17,6 +17,7 @@ import javax.annotation.Nullable;
 import java.util.Objects;
 
 /**
+ * raft node client
  * @author huangjianqin
  * @date 2021/11/7
  */

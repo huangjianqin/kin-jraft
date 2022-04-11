@@ -13,8 +13,8 @@ public interface StateMachineFactory<NW extends DefaultStateMachine, S extends R
     /**
      * 创建{@link com.alipay.sofa.jraft.StateMachine}实例并进行初始化
      *
-     * @param bootstrap   raft node bootstrap
+     * @param raftServer   raft node server
      * @param raftService raft service
      */
-    NW create(RaftServerBootstrap bootstrap, @Nullable S raftService);
+    NW create(RaftServer raftServer, @Nullable S raftService);
 }

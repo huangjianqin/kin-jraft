@@ -6,7 +6,7 @@ import java.io.IOException;
  * @author huangjianqin
  * @date 2021/11/14
  */
-public interface SnapshotFileOpr<T> {
+public interface SnapshotFileOperation<T> {
     /**
      * 保存快照
      */

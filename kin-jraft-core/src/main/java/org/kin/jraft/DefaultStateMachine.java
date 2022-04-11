@@ -32,7 +32,7 @@ public class DefaultStateMachine<T> extends StateMachineAdapter implements Logge
     /** 注册的{@link NodeStateChangeListener}实例 */
     private final List<NodeStateChangeListener> listeners = new CopyOnWriteArrayList<>();
     /** 快照操作逻辑 */
-    private SnapshotFileOpr<T> snapshotFileOpr;
+    private SnapshotFileOperation<T> snapshotFileOperation;
 
     public DefaultStateMachine(List<NodeStateChangeListener> listeners) {
         this.listeners.addAll(listeners);
@@ -44,7 +44,7 @@ public class DefaultStateMachine<T> extends StateMachineAdapter implements Logge
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected void init(RaftServerOptions opts) {
-        snapshotFileOpr = opts.getSnapshotFileOpr();
+        snapshotFileOperation = opts.getSnapshotFileOperation();
     }
 
     @Override
@@ -85,7 +85,7 @@ public class DefaultStateMachine<T> extends StateMachineAdapter implements Logge
         Object snapshotValue = getSnapshotValue();
         Utils.runInThread(() -> {
             String path = writer.getPath() + File.separator + RaftUtils.SNAPSHOT_FILE_NAME;
-            if (snapshotFileOpr.save(path, getSnapshotValue())) {
+            if (snapshotFileOperation.save(path, getSnapshotValue())) {
                 if (writer.addFile(RaftUtils.SNAPSHOT_FILE_NAME)) {
                     done.run(Status.OK());
                 } else {
@@ -115,7 +115,7 @@ public class DefaultStateMachine<T> extends StateMachineAdapter implements Logge
 
         String path = reader.getPath() + File.separator + RaftUtils.SNAPSHOT_FILE_NAME;
         try {
-            onSnapshotLoad(snapshotFileOpr.load(path));
+            onSnapshotLoad(snapshotFileOperation.load(path));
             return true;
         } catch (IOException e) {
             error("fail to load snapshot from {}", path);

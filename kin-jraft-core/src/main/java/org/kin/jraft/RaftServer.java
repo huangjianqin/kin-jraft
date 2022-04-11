@@ -22,12 +22,13 @@ import java.util.List;
 import java.util.Objects;
 
 /**
+ * raft node server
  * @author huangjianqin
  * @date 2021/11/7
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
-public final class RaftServerBootstrap implements Lifecycle<RaftServerOptions> {
-    private static final Logger log = LoggerFactory.getLogger(RaftServerBootstrap.class);
+public final class RaftServer implements Lifecycle<RaftServerOptions> {
+    private static final Logger log = LoggerFactory.getLogger(RaftServer.class);
 
     /** raft service */
     private RaftGroupService raftGroupService;

@@ -11,13 +11,13 @@ import com.alipay.sofa.jraft.rpc.RpcServer;
 @FunctionalInterface
 public interface RaftServiceFactory<S extends RaftService> {
     /** {@link DefaultRaftService}工厂 */
-    RaftServiceFactory<DefaultRaftService> EMPTY = (bootstrap, rpcServer) -> DefaultRaftService.INSTANCE;
+    RaftServiceFactory<DefaultRaftService> EMPTY = (raftServer, rpcServer) -> DefaultRaftService.INSTANCE;
 
     /**
      * 创建raft service实例并进行初始化(比如注册方法监听接口)
      *
-     * @param bootstrap raft node bootstrap
+     * @param raftServer raft node server
      * @param rpcServer raft service绑定的rpc server
      */
-    S create(RaftServerBootstrap bootstrap, RpcServer rpcServer);
+    S create(RaftServer raftServer, RpcServer rpcServer);
 }

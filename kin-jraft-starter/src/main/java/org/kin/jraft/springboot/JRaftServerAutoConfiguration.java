@@ -25,23 +25,23 @@ public class JRaftServerAutoConfiguration {
     private RaftServerProperties serverOptions;
 
     @Bean
-    public <NW extends DefaultStateMachine<?>, S extends RaftService> RaftServerBootstrap raftServerBootstrap(@Autowired List<NodeStateChangeListener> listeners,
-                                                                                                              @Autowired RaftServiceFactory<S> raftServiceFactory,
-                                                                                                              @Autowired(required = false) StateMachineFactory<NW, S> stateMachineFactory,
-                                                                                                              @Autowired(required = false) SnapshotFileOpr<?> snapshotFileOpr) {
+    public <NW extends DefaultStateMachine<?>, S extends RaftService> RaftServer raftServer(@Autowired List<NodeStateChangeListener> listeners,
+                                                                                            @Autowired RaftServiceFactory<S> raftServiceFactory,
+                                                                                            @Autowired(required = false) StateMachineFactory<NW, S> stateMachineFactory,
+                                                                                            @Autowired(required = false) SnapshotFileOperation<?> snapshotFileOperation) {
         org.kin.jraft.RaftServerOptions.Builder<NW, S> builder = org.kin.jraft.RaftServerOptions.<NW, S>builder()
                 .listeners(listeners)
                 .raftServiceFactory(raftServiceFactory)
                 .stateMachineFactory(stateMachineFactory);
-        if (Objects.nonNull(snapshotFileOpr)) {
-            builder.snapshotFileOpr(snapshotFileOpr);
+        if (Objects.nonNull(snapshotFileOperation)) {
+            builder.SnapshotFileOperation(snapshotFileOperation);
         }
         org.kin.jraft.RaftServerOptions<NW, S> realServerOptions = builder.build();
 
         BeanUtils.copyProperties(serverOptions, realServerOptions);
-        RaftServerBootstrap bootstrap = new RaftServerBootstrap();
-        bootstrap.init(realServerOptions);
-        return bootstrap;
+        RaftServer raftServer = new RaftServer();
+        raftServer.init(realServerOptions);
+        return raftServer;
     }
 
     @ConditionalOnMissingBean(RaftServiceFactory.class)

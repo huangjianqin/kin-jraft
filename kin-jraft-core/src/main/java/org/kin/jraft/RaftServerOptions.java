@@ -36,7 +36,7 @@ public final class RaftServerOptions<NW extends DefaultStateMachine<?>, S extend
     /** 自定义{@link com.alipay.sofa.jraft.StateMachine}实现类构建逻辑 */
     private StateMachineFactory<NW, S> stateMachineFactory;
     /** 快照文件操作 */
-    private SnapshotFileOpr<?> snapshotFileOpr = DefaultSnapshotFileOpr.INSTANCE;
+    private SnapshotFileOperation<?> snapshotFileOperation = DefaultSnapshotFileOperation.INSTANCE;
 
     /**
      * A follower would become a candidate if it doesn't receive any message
@@ -325,8 +325,8 @@ public final class RaftServerOptions<NW extends DefaultStateMachine<?>, S extend
         return stateMachineFactory;
     }
 
-    public SnapshotFileOpr<?> getSnapshotFileOpr() {
-        return snapshotFileOpr;
+    public SnapshotFileOperation<?> getSnapshotFileOperation() {
+        return snapshotFileOperation;
     }
 
     public int getElectionTimeoutMs() {
@@ -536,8 +536,8 @@ public final class RaftServerOptions<NW extends DefaultStateMachine<?>, S extend
         return this;
     }
 
-    public RaftServerOptions<NW, S> setSnapshotFileOpr(SnapshotFileOpr<?> snapshotFileOpr) {
-        this.snapshotFileOpr = snapshotFileOpr;
+    public RaftServerOptions<NW, S> setSnapshotFileOperation(SnapshotFileOperation<?> snapshotFileOperation) {
+        this.snapshotFileOperation = snapshotFileOperation;
         return this;
     }
 
@@ -816,8 +816,8 @@ public final class RaftServerOptions<NW extends DefaultStateMachine<?>, S extend
             return this;
         }
 
-        public Builder<NW, S> snapshotFileOpr(SnapshotFileOpr<?> snapshotFileOpr) {
-            raftServerOptions.snapshotFileOpr = snapshotFileOpr;
+        public Builder<NW, S> SnapshotFileOperation(SnapshotFileOperation<?> snapshotFileOperation) {
+            raftServerOptions.snapshotFileOperation = snapshotFileOperation;
             return this;
         }
 
@@ -1040,10 +1040,10 @@ public final class RaftServerOptions<NW extends DefaultStateMachine<?>, S extend
             return raftServerOptions;
         }
 
-        public RaftServerBootstrap bootstrap() {
-            RaftServerBootstrap bootstrap = new RaftServerBootstrap();
-            bootstrap.init(build());
-            return bootstrap;
+        public RaftServer bind() {
+            RaftServer raftServer = new RaftServer();
+            raftServer.init(build());
+            return raftServer;
         }
     }
 }

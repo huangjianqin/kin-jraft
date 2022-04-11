@@ -4,7 +4,7 @@ import com.alipay.sofa.jraft.Status;
 import com.alipay.sofa.jraft.closure.ReadIndexClosure;
 import com.alipay.sofa.jraft.util.BytesUtil;
 import org.kin.jraft.AbstractRaftService;
-import org.kin.jraft.RaftServerBootstrap;
+import org.kin.jraft.RaftServer;
 
 /**
  * @author huangjianqin
@@ -12,12 +12,12 @@ import org.kin.jraft.RaftServerBootstrap;
  */
 public class CounterRaftServiceImpl extends AbstractRaftService implements CounterRaftService {
 
-    public CounterRaftServiceImpl(RaftServerBootstrap bootstrap) {
-        super(bootstrap);
+    public CounterRaftServiceImpl(RaftServer raftServer) {
+        super(raftServer);
     }
 
     private long getValue() {
-        CounterStateMachine sm = bootstrap.getSm();
+        CounterStateMachine sm = raftServer.getSm();
         return sm.getValue();
     }
 
@@ -29,7 +29,7 @@ public class CounterRaftServiceImpl extends AbstractRaftService implements Count
             return;
         }
 
-        bootstrap.getNode().readIndex(BytesUtil.EMPTY_BYTES, new ReadIndexClosure() {
+        raftServer.getNode().readIndex(BytesUtil.EMPTY_BYTES, new ReadIndexClosure() {
             @Override
             public void run(Status status, long index, byte[] reqCtx) {
                 if (status.isOk()) {
