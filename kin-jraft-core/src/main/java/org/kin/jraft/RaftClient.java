@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.Nullable;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 
 /**
  * raft node client
@@ -131,6 +132,7 @@ public final class RaftClient implements Lifecycle<RaftClientOptions>, Closeable
         if (Objects.isNull(serviceEndpoint)) {
             //如果没有配置raft service address, 则直接往leader请求, 这里认为raft service与raft node使用同一rpc server
             invokeLeaderAsync(request, callback, timeoutMs);
+            return;
         }
 
         try {
@@ -138,6 +140,38 @@ public final class RaftClient implements Lifecycle<RaftClientOptions>, Closeable
         } catch (Exception e) {
             ExceptionUtils.throwExt(e);
         }
+    }
+
+    /**
+     * 往raft service异步请求消息
+     */
+    @SuppressWarnings("unchecked")
+    public <T> CompletableFuture<T> invokeRaftServiceAsync(Object request, long timeoutMs) {
+        checkState();
+
+        CompletableFuture<T> consumer = new CompletableFuture<>();
+
+        InvokeCallback callback = (result, err) -> {
+            if (err == null) {
+                consumer.complete((T) result);
+            } else {
+                consumer.completeExceptionally(err);
+            }
+        };
+
+        if (Objects.isNull(serviceEndpoint)) {
+            //如果没有配置raft service address, 则直接往leader请求, 这里认为raft service与raft node使用同一rpc server
+            invokeLeaderAsync(request, callback, timeoutMs);
+            return consumer;
+        }
+
+        try {
+            clientService.getRpcClient().invokeAsync(serviceEndpoint, request, callback, timeoutMs);
+        } catch (Exception e) {
+            consumer.completeExceptionally(e);
+        }
+
+        return consumer;
     }
 
     /**
