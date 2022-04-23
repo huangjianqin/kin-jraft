@@ -25,29 +25,20 @@ public class JRaftServerAutoConfiguration {
     private RaftServerProperties serverOptions;
 
     @Bean
-    public <NW extends DefaultStateMachine<?>, S extends RaftService> RaftServer raftServer(@Autowired List<NodeStateChangeListener> listeners,
-                                                                                            @Autowired RaftServiceFactory<S> raftServiceFactory,
-                                                                                            @Autowired(required = false) StateMachineFactory<NW, S> stateMachineFactory,
-                                                                                            @Autowired(required = false) SnapshotFileOperation<?> snapshotFileOperation) {
-        org.kin.jraft.RaftServerOptions.Builder<NW, S> builder = org.kin.jraft.RaftServerOptions.<NW, S>builder()
-                .listeners(listeners)
-                .raftServiceFactory(raftServiceFactory)
-                .stateMachineFactory(stateMachineFactory);
-        if (Objects.nonNull(snapshotFileOperation)) {
-            builder.SnapshotFileOperation(snapshotFileOperation);
+    public RaftServer raftServer(@Autowired(required = false) RaftServiceFactory raftServiceFactory,
+                                 @Autowired List<NodeStateChangeListener> listeners,
+                                 @Autowired List<RaftGroupOptions> raftGroupOptionsList,
+                                 @Autowired(required = false) NodeOptionsCustomizer nodeOptionsCustomizer) {
+        RaftServerOptions.Builder builder = RaftServerOptions.builder();
+        serverOptions.fillRaftServerOptions(builder);
+        if (Objects.nonNull(raftServiceFactory)) {
+            builder.raftServiceFactory(raftServiceFactory);
         }
-        org.kin.jraft.RaftServerOptions<NW, S> realServerOptions = builder.build();
-
-        BeanUtils.copyProperties(serverOptions, realServerOptions);
-        RaftServer raftServer = new RaftServer();
-        raftServer.init(realServerOptions);
-        return raftServer;
+        builder.listeners(listeners);
+        builder.groups(raftGroupOptionsList);
+        if (Objects.nonNull(nodeOptionsCustomizer)) {
+            builder.nodeOptionsCustomizer(nodeOptionsCustomizer);
+        }
+        return builder.build();
     }
-
-    @ConditionalOnMissingBean(RaftServiceFactory.class)
-    @Bean
-    public RaftServiceFactory<DefaultRaftService> stateMachineFactory() {
-        return RaftServiceFactory.EMPTY;
-    }
-
 }

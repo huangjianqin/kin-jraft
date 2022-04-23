@@ -1,0 +1,6 @@
+kin:
+  jraft:
+    server:
+      address: 127.0.0.1:9001
+      cluster-addresses: 127.0.0.1:9001,127.0.0.1:9002,127.0.0.1:9003
+      data-dir: raft/counter1

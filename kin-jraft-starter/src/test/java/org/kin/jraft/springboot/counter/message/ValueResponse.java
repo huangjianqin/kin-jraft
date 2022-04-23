@@ -1,6 +1,7 @@
 package org.kin.jraft.springboot.counter.message;
 
-import org.kin.jraft.AbstractResponse;
+
+import org.kin.jraft.springboot.AbstractResponse;
 
 /**
  * 返回值

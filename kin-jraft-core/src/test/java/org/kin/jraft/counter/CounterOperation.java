@@ -73,4 +73,12 @@ public class CounterOperation implements Serializable {
     public long getDelta() {
         return delta;
     }
+
+    @Override
+    public String toString() {
+        return "CounterOperation{" +
+                "op=" + op +
+                ", delta=" + delta +
+                '}';
+    }
 }

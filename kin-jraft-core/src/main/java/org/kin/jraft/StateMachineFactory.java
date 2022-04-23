@@ -1,6 +1,6 @@
 package org.kin.jraft;
 
-import javax.annotation.Nullable;
+import com.alipay.sofa.jraft.StateMachine;
 
 /**
  * {@link com.alipay.sofa.jraft.StateMachine}工厂
@@ -9,12 +9,12 @@ import javax.annotation.Nullable;
  * @date 2021/11/7
  */
 @FunctionalInterface
-public interface StateMachineFactory<NW extends DefaultStateMachine, S extends RaftService> {
+public interface StateMachineFactory{
     /**
      * 创建{@link com.alipay.sofa.jraft.StateMachine}实例并进行初始化
      *
-     * @param raftServer   raft node server
-     * @param raftService raft service
+     * @param raftServer raft server
+     * @param raftGroup   raft group
      */
-    NW create(RaftServer raftServer, @Nullable S raftService);
+    AbstractStateMachine create(RaftServer raftServer, RaftGroup raftGroup);
 }

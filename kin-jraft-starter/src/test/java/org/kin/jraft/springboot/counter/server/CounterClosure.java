@@ -1,6 +1,6 @@
 package org.kin.jraft.springboot.counter.server;
 
-import org.kin.jraft.AbstractClosure;
+import org.kin.jraft.springboot.AbstractClosure;
 import org.kin.jraft.springboot.counter.message.ValueResponse;
 
 /**

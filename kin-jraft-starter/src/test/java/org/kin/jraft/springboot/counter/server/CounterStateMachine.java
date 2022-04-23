@@ -2,10 +2,11 @@ package org.kin.jraft.springboot.counter.server;
 
 import com.alipay.sofa.jraft.Iterator;
 import com.alipay.sofa.jraft.Status;
-import org.kin.jraft.DefaultStateMachine;
+import org.kin.jraft.AbstractStateMachine;
+import org.kin.jraft.RaftGroup;
+import org.kin.jraft.RaftServer;
 import org.kin.jraft.RaftUtils;
 
-import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -13,13 +14,14 @@ import java.util.concurrent.atomic.AtomicLong;
  * @author huangjianqin
  * @date 2021/11/14
  */
-public class CounterStateMachine extends DefaultStateMachine<Long> {
+public class CounterStateMachine extends AbstractStateMachine {
     /**
      * Counter value
      */
     private final AtomicLong value = new AtomicLong(0);
 
-    public CounterStateMachine() {
+    public CounterStateMachine(RaftServer raftServer, RaftGroup raftGroup) {
+        super(raftServer, raftGroup);
     }
 
     @Override
@@ -66,17 +68,16 @@ public class CounterStateMachine extends DefaultStateMachine<Long> {
         }
     }
 
+    @Override
+    protected String getGroup() {
+        return Constants.GROUP_ID;
+    }
+
     public long getValue() {
         return this.value.get();
     }
 
-    @Override
-    protected Long getSnapshotValue() {
-        return getValue();
-    }
-
-    @Override
-    protected void onSnapshotLoad(Long value) {
-        this.value.set(value);
+    public void setValue(long v){
+        this.value.set(v);
     }
 }

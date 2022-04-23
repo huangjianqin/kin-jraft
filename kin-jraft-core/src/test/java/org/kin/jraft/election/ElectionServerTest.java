@@ -1,6 +1,7 @@
 package org.kin.jraft.election;
 
 import org.kin.jraft.NodeStateChangeListener;
+import org.kin.jraft.RaftGroupOptions;
 import org.kin.jraft.RaftServer;
 import org.kin.jraft.RaftServerOptions;
 
@@ -17,26 +18,26 @@ public class ElectionServerTest {
 
         String[] strs = address.split(":");
 
-        RaftServer electionRaftServer = RaftServerOptions.electionBuilder()
-                .groupId("election_raft")
-                //模拟每个节点的log目录不一致
+        RaftServer raftServer = RaftServerOptions.builder()
                 .dataDir("raft/election".concat(strs[1]))
                 .address(address)
                 .clusterAddresses(clusterAddresses)
                 .listeners(new NodeStateChangeListener() {
-
                     @Override
-                    public void onBecomeLeader(long term) {
-                        System.out.println("[ElectionRaftServer] Leader start on term: " + term);
+                    public void onBecomeLeader(String groupId, long term) {
+                        System.out.println(String.format("[%s] leader start on term: %d", groupId, term));
                     }
 
                     @Override
-                    public void onStepDown(long oldTerm) {
-                        System.out.println("[ElectionRaftServer] Leader step down: " + oldTerm);
+                    public void onStepDown(String groupId, long oldTerm) {
+                        System.out.println(String.format("[%s] leader step down: %d", groupId, oldTerm));
                     }
                 })
-                .bind();
+                .group(RaftGroupOptions.builder("election_raft").build())
+                .build();
 
         Thread.sleep(TimeUnit.MINUTES.toMillis(5));
+
+        raftServer.shutdown();
     }
 }
