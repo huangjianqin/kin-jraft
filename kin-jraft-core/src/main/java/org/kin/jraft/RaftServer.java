@@ -293,9 +293,6 @@ public final class RaftServer implements Lifecycle<RaftServerOptions>, LoggerOpr
         Status status;
         try {
             RouteTable instance = RouteTable.getInstance();
-            Configuration oldConf = instance.getConfiguration(groupId);
-            String oldLeader = Optional.ofNullable(instance.selectLeader(groupId)).orElse(PeerId.emptyPeer())
-                    .getEndpoint().toString();
             status = instance.refreshLeader(this.cliClientService, groupId, rpcRequestTimeoutMs);
             if (!status.isOk()) {
                 error("fail to refresh leader for group id : {}, status is : {}", groupId, status);

@@ -100,7 +100,7 @@ public final class RaftClient implements Lifecycle<RaftClientOptions>, Closeable
     /**
      * 往raft leader异步请求消息
      */
-    public void invokeLeaderAsync(Object request, InvokeCallback callback, long timeoutMs) {
+    public void reqLeaderAsync(Object request, InvokeCallback callback, long timeoutMs) {
         checkState();
         try {
             clientService.getRpcClient().invokeAsync(getLeaderEndpoint(), request, callback, timeoutMs);
@@ -113,7 +113,7 @@ public final class RaftClient implements Lifecycle<RaftClientOptions>, Closeable
      * 往raft leader同步请求消息
      */
     @SuppressWarnings("unchecked")
-    public <T> T invokeLeaderSync(Object request, long timeoutMs) {
+    public <T> T reqLeaderSync(Object request, long timeoutMs) {
         checkState();
         try {
             return (T) clientService.getRpcClient().invokeSync(getLeaderEndpoint(), request, timeoutMs);
@@ -127,11 +127,11 @@ public final class RaftClient implements Lifecycle<RaftClientOptions>, Closeable
     /**
      * 往raft service异步请求消息
      */
-    public void invokeRaftServiceAsync(Object request, InvokeCallback callback, long timeoutMs) {
+    public void reqRaftServiceAsync(Object request, InvokeCallback callback, long timeoutMs) {
         checkState();
         if (Objects.isNull(serviceEndpoint)) {
             //如果没有配置raft service address, 则直接往leader请求, 这里认为raft service与raft node使用同一rpc server
-            invokeLeaderAsync(request, callback, timeoutMs);
+            reqLeaderAsync(request, callback, timeoutMs);
             return;
         }
 
@@ -146,7 +146,7 @@ public final class RaftClient implements Lifecycle<RaftClientOptions>, Closeable
      * 往raft service异步请求消息
      */
     @SuppressWarnings("unchecked")
-    public <T> CompletableFuture<T> invokeRaftServiceAsync(Object request, long timeoutMs) {
+    public <T> CompletableFuture<T> reqRaftServiceAsync(Object request, long timeoutMs) {
         checkState();
 
         CompletableFuture<T> consumer = new CompletableFuture<>();
@@ -161,7 +161,7 @@ public final class RaftClient implements Lifecycle<RaftClientOptions>, Closeable
 
         if (Objects.isNull(serviceEndpoint)) {
             //如果没有配置raft service address, 则直接往leader请求, 这里认为raft service与raft node使用同一rpc server
-            invokeLeaderAsync(request, callback, timeoutMs);
+            reqLeaderAsync(request, callback, timeoutMs);
             return consumer;
         }
 
@@ -178,11 +178,11 @@ public final class RaftClient implements Lifecycle<RaftClientOptions>, Closeable
      * 往raft service同步请求消息
      */
     @SuppressWarnings("unchecked")
-    public <T> T invokeRaftServiceSync(Object request, long timeoutMs) {
+    public <T> T reqRaftServiceSync(Object request, long timeoutMs) {
         checkState();
         if (Objects.isNull(serviceEndpoint)) {
             //如果没有配置raft service address, 则直接往leader请求, 这里认为raft service与raft node使用同一rpc server
-            return invokeLeaderSync(request, timeoutMs);
+            return reqLeaderSync(request, timeoutMs);
         }
 
         try {

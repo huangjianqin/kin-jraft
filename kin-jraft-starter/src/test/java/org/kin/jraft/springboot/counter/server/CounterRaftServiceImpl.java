@@ -4,7 +4,6 @@ import com.alipay.sofa.jraft.Status;
 import com.alipay.sofa.jraft.closure.ReadIndexClosure;
 import com.alipay.sofa.jraft.error.RaftError;
 import com.alipay.sofa.jraft.rpc.InvokeCallback;
-import com.alipay.sofa.jraft.util.BytesUtil;
 import org.kin.jraft.AbstractRaftService;
 import org.kin.jraft.RaftGroup;
 import org.kin.jraft.RaftServer;
@@ -58,7 +57,7 @@ public class CounterRaftServiceImpl extends AbstractRaftService implements Count
                     raftGroup.applyTask(dataObj, closure);
                 } else {
                     //follower, 则走remote raft log
-                    raftGroup.invokeToLeader(dataObj, new InvokeCallback() {
+                    raftGroup.reqLeaderAsync(dataObj, new InvokeCallback() {
                         @Override
                         public void complete(Object o, Throwable ex) {
                             if (Objects.nonNull(ex)) {
@@ -91,7 +90,7 @@ public class CounterRaftServiceImpl extends AbstractRaftService implements Count
             //follower, remote raft log
             IncrementAndGetRequest request = new IncrementAndGetRequest();
             request.setDelta(delta);
-            raftGroup.invokeToLeader(request, new InvokeCallback() {
+            raftGroup.reqLeaderAsync(request, new InvokeCallback() {
                 @Override
                 public void complete(Object o, Throwable ex) {
                     if (Objects.nonNull(ex)) {

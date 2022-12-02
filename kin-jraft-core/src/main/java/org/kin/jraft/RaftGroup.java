@@ -108,7 +108,7 @@ public final class RaftGroup implements Closeable, LoggerOprs {
      * @param dataObj task data
      * @param callback rpc invoke callback
      */
-    public void invokeToLeader(Object dataObj, InvokeCallback callback) {
+    public void reqLeaderAsync(Object dataObj, InvokeCallback callback) {
         PeerId leaderPeerId = raftServer.getLeader(groupId);
         if (Objects.isNull(leaderPeerId)) {
             throw new IllegalStateException(String.format("no leader for raft group '%s'", groupId));

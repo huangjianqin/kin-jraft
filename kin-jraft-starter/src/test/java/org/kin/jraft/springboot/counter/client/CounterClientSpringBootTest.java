@@ -41,7 +41,7 @@ public class CounterClientSpringBootTest {
     private static void incrementAndGet(RaftClient client, long delta, CountDownLatch latch) {
         IncrementAndGetRequest request = new IncrementAndGetRequest();
         request.setDelta(delta);
-        client.invokeLeaderAsync(request, (result, err) -> {
+        client.reqLeaderAsync(request, (result, err) -> {
             if (err == null) {
                 latch.countDown();
                 System.out.println("incrementAndGet result:" + result);
@@ -54,7 +54,7 @@ public class CounterClientSpringBootTest {
 
     private static void get(RaftClient client) {
         GetValueRequest request = new GetValueRequest();
-        client.invokeLeaderAsync(request, (result, err) -> {
+        client.reqLeaderAsync(request, (result, err) -> {
             if (err == null) {
                 System.out.println("get result:" + result);
             } else {
